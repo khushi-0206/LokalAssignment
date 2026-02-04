@@ -24,15 +24,18 @@ class AuthViewModel : ViewModel() {
 
     fun sendOtp(email: String) {
         if (email.isBlank() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            // Could add error handling for invalid email, but for now simple checking
             return
         }
         OtpManager.generateOtp(email)
         AnalyticsLogger.logOtpGenerated(email)
-        _authState.value = AuthState.OtpSent(email)
+        // Set expiry time to 60 seconds from now
+        val expiryTime = System.currentTimeMillis() + 60000
+        _authState.value = AuthState.OtpSent(email, expiryTime = expiryTime)
     }
 
     fun verifyOtp(email: String, otp: String) {
+        val currentExpiryTime = (_authState.value as? AuthState.OtpSent)?.expiryTime ?: 0L
+        
         when (val result = OtpManager.validateOtp(email, otp)) {
             OtpResult.Success -> {
                 AnalyticsLogger.logOtpValidationSuccess(email)
@@ -41,20 +44,24 @@ class AuthViewModel : ViewModel() {
                 startSessionTimer(startTime)
             }
             is OtpResult.Invalid -> {
-                AnalyticsLogger.logOtpValidationFailure(email, "Invalid OTP")
-                _authState.value = AuthState.OtpSent(email, error = "Invalid OTP")
+                AnalyticsLogger.logOtpValidationFailure(email, "Invalid OTP. ${result.attemptsRemaining} attempts remaining")
+                _authState.value = AuthState.OtpSent(
+                    email, 
+                    error = "Invalid OTP. ${result.attemptsRemaining} attempts remaining.",
+                    expiryTime = currentExpiryTime
+                )
             }
             is OtpResult.Expired -> {
                 AnalyticsLogger.logOtpValidationFailure(email, "Expired OTP")
-                _authState.value = AuthState.OtpSent(email, error = "OTP Expired")
+                _authState.value = AuthState.OtpSent(email, error = "OTP Expired. Please resend.", expiryTime = currentExpiryTime)
             }
             is OtpResult.MaxAttemptsExceeded -> {
                 AnalyticsLogger.logOtpValidationFailure(email, "Max Attempts Exceeded")
-                _authState.value = AuthState.OtpSent(email, error = "Max attempts exceeded. Please resend.")
+                _authState.value = AuthState.OtpSent(email, error = "Max attempts exceeded. Please resend.", expiryTime = currentExpiryTime)
             }
             OtpResult.NoOtpFound -> {
                 AnalyticsLogger.logOtpValidationFailure(email, "No OTP Found")
-                _authState.value = AuthState.OtpSent(email, error = "Session invalid. Please resend.")
+                _authState.value = AuthState.OtpSent(email, error = "Session invalid. Please resend.", expiryTime = currentExpiryTime)
             }
         }
     }
@@ -72,6 +79,10 @@ class AuthViewModel : ViewModel() {
                 delay(1000)
             }
         }
+    }
+
+    fun resetToLogin() {
+        _authState.value = AuthState.LoggedOut
     }
 
     fun logout() {

@@ -41,8 +41,10 @@ class MainActivity : ComponentActivity() {
                             OtpScreen(
                                 email = state.email,
                                 error = state.error,
+                                expiryTime = state.expiryTime,
                                 onVerifyOtp = { otp -> authViewModel.verifyOtp(state.email, otp) },
-                                onResendOtp = { authViewModel.resendOtp(state.email) }
+                                onResendOtp = { authViewModel.resendOtp(state.email) },
+                                onBackClick = { authViewModel.resetToLogin() }
                             )
                         }
                         is AuthState.LoggedIn -> {

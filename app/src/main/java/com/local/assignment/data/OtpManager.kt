@@ -31,7 +31,7 @@ object OtpManager {
 
     sealed interface OtpResult {
         object Success : OtpResult
-        object Invalid : OtpResult
+        data class Invalid(val attemptsRemaining: Int) : OtpResult
         object Expired : OtpResult
         object MaxAttemptsExceeded : OtpResult
         object NoOtpFound : OtpResult
@@ -42,7 +42,7 @@ object OtpManager {
 
         val currentTime = System.currentTimeMillis()
 
-        // Check if attempts exceeded first (though usually we check on failure, strict rule: reset only on new OTP)
+        // Check if attempts exceeded first
         if (data.attempts >= MAX_ATTEMPTS) {
             return OtpResult.MaxAttemptsExceeded
         }
@@ -54,7 +54,6 @@ object OtpManager {
 
         if (data.code == inputOtp) {
             // Success
-            // Can optionally clear OTP here to prevent re-use
             storage.remove(email) 
             return OtpResult.Success
         } else {
@@ -63,7 +62,7 @@ object OtpManager {
             if (data.attempts >= MAX_ATTEMPTS) {
                 return OtpResult.MaxAttemptsExceeded
             }
-            return OtpResult.Invalid
+            return OtpResult.Invalid(MAX_ATTEMPTS - data.attempts)
         }
     }
 }
