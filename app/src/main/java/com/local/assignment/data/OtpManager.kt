@@ -10,15 +10,13 @@ data class OtpData(
 )
 
 object OtpManager {
-    private const val OTP_EXPIRY_MS = 60 * 1000L // 60 seconds
+    private const val OTP_EXPIRY_MS = 60 * 1000L
     private const val MAX_ATTEMPTS = 3
     private const val OTP_LENGTH = 6
 
-    // Using ConcurrentHashMap for thread safety, though strictly local usage might not need it.
     private val storage = ConcurrentHashMap<String, OtpData>()
 
     fun generateOtp(email: String): String {
-        // Generate random 6 digit numeric code
         val otp = (100000..999999).random().toString()
         val data = OtpData(
             code = otp,
@@ -42,22 +40,18 @@ object OtpManager {
 
         val currentTime = System.currentTimeMillis()
 
-        // Check if attempts exceeded first
         if (data.attempts >= MAX_ATTEMPTS) {
             return OtpResult.MaxAttemptsExceeded
         }
 
-        // Check expiry
         if (currentTime - data.generatedTime > OTP_EXPIRY_MS) {
             return OtpResult.Expired
         }
 
         if (data.code == inputOtp) {
-            // Success
             storage.remove(email) 
             return OtpResult.Success
         } else {
-            // Increment attempts
             data.attempts++
             if (data.attempts >= MAX_ATTEMPTS) {
                 return OtpResult.MaxAttemptsExceeded

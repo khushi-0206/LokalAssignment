@@ -28,7 +28,6 @@ class AuthViewModel : ViewModel() {
         }
         OtpManager.generateOtp(email)
         AnalyticsLogger.logOtpGenerated(email)
-        // Set expiry time to 60 seconds from now
         val expiryTime = System.currentTimeMillis() + 60000
         _authState.value = AuthState.OtpSent(email, expiryTime = expiryTime)
     }

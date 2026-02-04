@@ -6,7 +6,6 @@ object AnalyticsLogger {
 
     fun logOtpGenerated(email: String) {
         Timber.i("EVENT: OTP_GENERATED | Email: $email")
-        // Specific SDK call would go here
     }
 
     fun logOtpValidationSuccess(email: String) {

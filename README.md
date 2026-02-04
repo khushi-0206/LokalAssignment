@@ -15,7 +15,7 @@
     *   Timer survives screen rotation (handled by Timer in ViewModel and `remember` in Compose).
     *   Click "Logout" to return to login.
 
-## Documentation (Mandatory)
+## Documentation
 
 ### 1. OTP Logic and Expiry Handling
 *   **Generation**: A random 6-digit number is generated in `OtpManager`. It is stored in a thread-safe `ConcurrentHashMap` mapped to the email.

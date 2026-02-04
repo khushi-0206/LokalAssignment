@@ -23,7 +23,6 @@ fun OtpScreen(
 ) {
     var otp by remember { mutableStateOf("") }
     
-    // Timer logic
     var timeRemaining by remember(expiryTime) { mutableStateOf((expiryTime - System.currentTimeMillis()).coerceAtLeast(0L)) }
     
     LaunchedEffect(expiryTime) {
@@ -45,7 +44,7 @@ fun OtpScreen(
     }
 
     val gradient = Brush.verticalGradient(
-        colors = listOf(Color(0xFFFFF3E0), Color(0xFFFFCC80)) // Orange 50 to 200
+        colors = listOf(Color(0xFFFFF3E0), Color(0xFFFFCC80))
     )
 
     Column(
@@ -96,7 +95,6 @@ fun OtpScreen(
             }
         }
         
-        // Expiry Timer
         Text(
             text = if (timeRemaining > 0) "Expires in: $formattedTime" else "OTP Expired",
             style = MaterialTheme.typography.bodySmall,
@@ -116,7 +114,6 @@ fun OtpScreen(
 
         if (error != null) {
             Spacer(modifier = Modifier.height(8.dp))
-            // Highlighted error
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
                 modifier = Modifier.fillMaxWidth()

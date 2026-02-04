@@ -36,7 +36,7 @@ fun SessionScreen(
     }
 
     val gradient = Brush.verticalGradient(
-        colors = listOf(Color(0xFFE0F2F1), Color(0xFF80CBC4)) // Teal 50 to 200
+        colors = listOf(Color(0xFFE0F2F1), Color(0xFF80CBC4))
     )
 
     Column(
@@ -64,7 +64,6 @@ fun SessionScreen(
                 modifier = Modifier.size(100.dp)
             )
         } else {
-             // Fallback if asset is missing
             Icon(
                 imageVector = androidx.compose.material.icons.Icons.Default.Person,
                 contentDescription = "Session Placeholder",

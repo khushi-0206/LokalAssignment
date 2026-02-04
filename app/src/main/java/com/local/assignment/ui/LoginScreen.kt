@@ -22,7 +22,7 @@ fun LoginScreen(
     val context = androidx.compose.ui.platform.LocalContext.current
     
     val gradient = Brush.verticalGradient(
-        colors = listOf(Color(0xFFEDE7F6), Color(0xFFD1C4E9)) // Deep Purple 50 to 100
+        colors = listOf(Color(0xFFEDE7F6), Color(0xFFD1C4E9))
     )
 
     Column(
@@ -50,7 +50,6 @@ fun LoginScreen(
                 modifier = Modifier.size(100.dp)
             )
         } else {
-            // Fallback if asset is missing
             Icon(
                 imageVector = androidx.compose.material.icons.Icons.Default.Lock,
                 contentDescription = "Login Placeholder",
