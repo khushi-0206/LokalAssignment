@@ -8,12 +8,16 @@
 
 ## Functional Overview
 *   **Login**: Enter any valid email. Click "Send OTP".
+    *   **UI**: Soft Purple gradient background with Lock icon.
+    *   **Validation**: Toasts for invalid email formats.
 *   **OTP**: Check Logcat for the 6-digit code. Enter it to verify.
-    *   OTP expires in 60 seconds.
-    *   Max 3 attempts allowed.
+    *   **UI**: Soft Orange gradient background with Shield icon.
+    *   **Timer**: Visual 60-second countdown.
+    *   **Validation**: Max 3 attempts allowed. Remaining attempts are highlighted on error.
 *   **Session**: Displays session start time and a live duration timer (mm:ss).
-    *   Timer survives screen rotation (handled by Timer in ViewModel and `remember` in Compose).
-    *   Click "Logout" to return to login.
+    *   **UI**: Soft Teal gradient background with Person icon.
+    *   **Features**: Timer survives screen rotation. Click "Logout" to return to login.
+
 
 ## Documentation
 
